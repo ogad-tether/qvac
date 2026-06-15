@@ -49,7 +49,7 @@ constexpr int kDefaultNCtx = 4096;
 // the exact input text); Metal decode is 20-30% faster from the
 // bandwidth saving.  Pass kvCacheType:"f32" for bit-exact parity with
 // the pre-quantisation behaviour.
-constexpr const char * kDefaultKvCacheType = "q8_0";
+constexpr const char * kDefaultKvCacheType = "f32";  // TEMP A/B (tmp/vulkan-ab-f32kv): isolate Vulkan crash — q8_0 vs f32
 
 tts_cpp::chatterbox::EngineOptions toEngineOptions(const ChatterboxConfig& cfg) {
   tts_cpp::chatterbox::EngineOptions opts;
