@@ -121,6 +121,33 @@ while remaining faster than playback (the 70-second passage took 16.0 seconds
 versus 13.0 seconds with one step, excluding model loading). These were single
 renders after warmup, rather than repeated benchmark measurements.
 
+### Why choose four steps for audio quality?
+
+Pocket's flow sampler transforms noise into the next audio latent. One step
+predicts a single update over the full interval from 0 to 1. Four steps use
+four quarter-interval updates, evaluating the flow network again on the
+updated latent each time. This gives the model intermediate refinement
+opportunities instead of relying on one full-interval prediction. It is a
+mechanistic reason to try additional steps when a take has an artifact, not
+proof that the reported sound was caused by a particular numerical error.
+
+The recommendation here is supported by the controlled listening result:
+the same text, voice, seed and temperature produced an audible artifact with
+one step in both Fabric and upstream, while the four-step take sounded clean
+to the listener. Use `steps: 4` when avoiding this artifact matters more than
+minimum generation latency. Keep `steps: 1` for the upstream performance
+default. The other eleven files in the listening set had no reported artifact;
+this is evidence of an improvement for one take, not a general quality score.
+
+Only the flow sampling stage repeats; text/voice conditioning and Mimi audio
+decoding are not each run four times. That is why the observed total latency
+increase was about 20–25%, rather than fourfold:
+
+| Passage | One-step generation | Four-step generation |
+| --- | ---: | ---: |
+| Original sentence (2.64 s audio) | 0.46 s | 0.56 s |
+| Extended story (69.92 s audio) | 13.03 s | 15.96 s |
+
 ## Validation
 
 Build native prebuilds using the package's pinned vcpkg registry, then build
