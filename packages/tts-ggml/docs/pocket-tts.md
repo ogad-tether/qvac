@@ -176,8 +176,13 @@ The full current inference TypeScript build has existing errors in safe-fetch,
 AudioGen and sdcpp. Focused Pocket compilation uses `noEmitOnError` and passes;
 the current SDK compiles. Physical iOS / Android audio validation and mobile
 SDK transport validation remain outside the measured coverage. Native CI
-builds succeed for Android and iOS; Linux/Windows compile but the unchanged
-`test-supertonic-fit-params` fails its CPU-refusal expectation.
+builds succeed for Android and iOS. The Linux/Windows Supertonic fit-test
+failure was traced to [speech PR #229](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/229),
+which enabled fused graphs on CPU builds without pointwise BLAS while the test
+retained its old CPU-refusal expectation. [Speech PR #240](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/240)
+corrects the test and fit documentation without changing synthesis or fit dispatch.
+The corrected test passes locally with and without Accelerate; Linux CI passes.
+Windows CI validation is pending.
 
 
 ## Dependency pins and measured performance
@@ -188,7 +193,7 @@ This change pins the registry baseline and Git reference to
 the version database available before its registry PR merges; baseline alone
 only selects minimum versions and otherwise vcpkg reads the default branch's
 version database. See the [vcpkg registry reference documentation](https://learn.microsoft.com/en-us/vcpkg/reference/vcpkg-configuration-json#registry-reference).
-The source and registry changes are draft PRs
+The source and registry changes are tracked in PRs
 [qvac-fabric-speech.cpp#240](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/240)
 and [qvac-registry-vcpkg#364](https://github.com/tetherto/qvac-registry-vcpkg/pull/364).
 
