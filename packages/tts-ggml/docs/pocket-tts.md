@@ -177,12 +177,9 @@ AudioGen and sdcpp. Focused Pocket compilation uses `noEmitOnError` and passes;
 the current SDK compiles. Physical iOS / Android audio validation and mobile
 SDK transport validation remain outside the measured coverage. Native CI
 builds succeed for Android and iOS. The Linux/Windows Supertonic fit-test
-failure was traced to [speech PR #229](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/229),
-which enabled fused graphs on CPU builds without pointwise BLAS while the test
-retained its old CPU-refusal expectation. [Speech PR #240](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/240)
-corrects the test and fit documentation without changing synthesis or fit dispatch.
-The corrected test passes locally with and without Accelerate; Linux CI passes.
-Windows CI validation is pending.
+regression introduced by [speech PR #229](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/229)
+is addressed independently in [speech PR #242](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/242).
+That fix is separate from the Pocket TTS source change and does not change runtime behavior.
 
 
 ## Dependency pins and measured performance
