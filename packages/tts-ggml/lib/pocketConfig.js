@@ -18,7 +18,10 @@ function buildPocketParams(files, optionInput, configInput) {
         pocketVoicePath: files.pocketVoice || (options.referenceAudio ? '' : asset(undefined, 'voice.gguf')),
         referenceAudio: typeof options.referenceAudio === 'string' ? options.referenceAudio : '',
         language: 'en',
-        useGPU: false
+        useGPU: false,
+        // Fabric's listening default. Explicit steps/numInferenceSteps below
+        // can still select the upstream one-step setting for lower latency.
+        steps: 4
     };
     if (options.referenceAudio !== undefined && typeof options.referenceAudio !== 'string')
         throw new Error('Pocket referenceAudio must be a path string');

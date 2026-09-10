@@ -29,7 +29,7 @@ const model = new TTSGgml({
   threads: 1,
   seed: 1234,
   temperature: 0.3,
-  steps: 1
+  steps: 4
 })
 try {
   await model.load()
@@ -101,6 +101,21 @@ English only; CPU only; `threads` defaults to one per worker (two workers).
 supports 8–192 kHz. Other engines' sampling, emotional, speed, GPU and
 LavaSR settings are rejected instead of silently ignored.
 
+Fabric defaults to four sampling steps, including SDK calls that omit `steps`.
+An explicit `steps: 1` (or addon `numInferenceSteps: 1`) retains the faster
+one-step setting. The native CLI and upstream reference still default to one
+step; use `--steps 4` when comparing them with Fabric's default.
+
+In a listening comparison of six prompts from 0.88 to 70 seconds, the listener
+reported an artifact on “speech” only in the one-step render of “Hello! We can
+generate speech with Fabric.” The four-step render was clean to that listener.
+The faster native build and earlier build produced nearly identical PCM, and
+matched-noise PyTorch synthesis also closely matched Fabric. This supports a
+sampling-quality adjustment; it does not establish that four steps prevent all
+artifacts. On an Apple M2, the paired renders took about 20–25% longer at four
+steps, while remaining faster than playback (the 70-second passage took 16.0
+seconds versus 13.0 seconds with one step, excluding model loading).
+
 ## Validation
 
 Build native prebuilds using the package's pinned vcpkg registry, then build
@@ -116,7 +131,7 @@ configuration, cache and worker are bounded by a process supervisor. The
 inference and addon real-model tests skip when their model variable is absent;
 pass it explicitly when validating synthesis.
 
-The current macOS port passes eight native Pocket tests, 282 addon unit tests,
+The current macOS port passes eight native Pocket tests, 283 addon unit tests,
 the real addon and inference tests, and four public SDK transport tests. The
 current pinned iOS Simulator Bare Kit worklet also passes 58 assertions and
 generates a valid WAV (Bare 1.29.4, iOS 18.6).
@@ -147,7 +162,8 @@ and [qvac-registry-vcpkg#364](https://github.com/tetherto/qvac-registry-vcpkg/pu
 
 The final native benchmark links the exact libraries installed by the pinned
 registry and normal addon build. It uses Apple M2 CPU, one thread per worker,
-two workers, one warmup and three measured runs per prompt. Medians:
+two workers, **one sampling step**, one warmup and three measured runs per
+prompt. These recorded results predate Fabric's four-step default. Medians:
 
 | Prompt | Upstream generation | Fabric generation | Upstream / Fabric audio length |
 | --- | ---: | ---: | ---: |

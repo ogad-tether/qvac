@@ -18,7 +18,7 @@ async function main() {
     config: { language: 'en', useGPU: false },
     threads: 1,
     seed: 1234,
-    steps: 1,
+    steps: 4,
     opts: { stats: true }
   })
   try {
