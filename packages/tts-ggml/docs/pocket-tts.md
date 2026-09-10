@@ -29,7 +29,7 @@ const model = new TTSGgml({
   threads: 1,
   seed: 1234,
   temperature: 0.3,
-  steps: 4
+  steps: 1
 })
 try {
   await model.load()
@@ -101,20 +101,25 @@ English only; CPU only; `threads` defaults to one per worker (two workers).
 supports 8–192 kHz. Other engines' sampling, emotional, speed, GPU and
 LavaSR settings are rejected instead of silently ignored.
 
-Fabric defaults to four sampling steps, including SDK calls that omit `steps`.
-An explicit `steps: 1` (or addon `numInferenceSteps: 1`) retains the faster
-one-step setting. The native CLI and upstream reference still default to one
-step; use `--steps 4` when comparing them with Fabric's default.
+Fabric defaults to one sampling step, matching the native CLI and upstream
+reference, including SDK calls that omit `steps`. An explicit `steps: 4` (or
+addon `numInferenceSteps: 4`) offers a quality option at additional compute
+cost; use `--steps 4` for an equivalent native CLI comparison.
 
 In a listening comparison of six prompts from 0.88 to 70 seconds, the listener
 reported an artifact on “speech” only in the one-step render of “Hello! We can
-generate speech with Fabric.” The four-step render was clean to that listener.
-The faster native build and earlier build produced nearly identical PCM, and
-matched-noise PyTorch synthesis also closely matched Fabric. This supports a
-sampling-quality adjustment; it does not establish that four steps prevent all
-artifacts. On an Apple M2, the paired renders took about 20–25% longer at four
-steps, while remaining faster than playback (the 70-second passage took 16.0
-seconds versus 13.0 seconds with one step, excluding model loading).
+generate speech with Fabric.” The listener also heard the artifact in the
+upstream PyTorch one-step reproduction with matching random inputs, while the
+four-step render sounded clean. The faster native build and earlier build
+produced nearly identical PCM, and matched-noise PyTorch synthesis closely
+matched Fabric. These findings support an upstream sampling artifact for this
+take, not a Fabric-specific one-step implementation bug. Four steps mitigated
+this example; they are not a guarantee against all artifacts or a port fix.
+
+On an Apple M2, the paired renders took about 20–25% longer at four steps,
+while remaining faster than playback (the 70-second passage took 16.0 seconds
+versus 13.0 seconds with one step, excluding model loading). These were single
+renders after warmup, rather than repeated benchmark measurements.
 
 ## Validation
 
@@ -163,7 +168,7 @@ and [qvac-registry-vcpkg#364](https://github.com/tetherto/qvac-registry-vcpkg/pu
 The final native benchmark links the exact libraries installed by the pinned
 registry and normal addon build. It uses Apple M2 CPU, one thread per worker,
 two workers, **one sampling step**, one warmup and three measured runs per
-prompt. These recorded results predate Fabric's four-step default. Medians:
+prompt, matching Fabric's default. Medians:
 
 | Prompt | Upstream generation | Fabric generation | Upstream / Fabric audio length |
 | --- | ---: | ---: | ---: |

@@ -19,9 +19,9 @@ function buildPocketParams(files, optionInput, configInput) {
         referenceAudio: typeof options.referenceAudio === 'string' ? options.referenceAudio : '',
         language: 'en',
         useGPU: false,
-        // Fabric's listening default. Explicit steps/numInferenceSteps below
-        // can still select the upstream one-step setting for lower latency.
-        steps: 4
+        // Match the upstream/native default. Four steps remain an explicit
+        // quality option through steps or numInferenceSteps below.
+        steps: 1
     };
     if (options.referenceAudio !== undefined && typeof options.referenceAudio !== 'string')
         throw new Error('Pocket referenceAudio must be a path string');

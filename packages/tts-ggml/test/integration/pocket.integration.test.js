@@ -43,24 +43,23 @@ module.exports = test(
         return pcm
       }
       const original = await run(24000)
-      // Cover the entire default-options -> native decoder path. The user
-      // reported an artifact on "speech" with one step in this exact prompt,
-      // and found the four-step take clean. This verifies the selected setting,
-      // not subjective quality, which still needs listening evaluation.
+      // Check that omitted steps match the explicit upstream/native default
+      // through the complete addon path. PCM parity validates configuration,
+      // not subjective quality or the absence of model-generated artifacts.
       const explicit = new TTSGgml({
         engine: 'pocket',
         files: { modelDir: bundle },
-        steps: 4
+        steps: 1
       })
       try {
         await explicit.load()
         const reference = await explicit.run({ input: text })
         const pcm = []
         for await (const chunk of reference.iterate()) pcm.push(...chunk.outputArray)
-        t.is(pcm.length, original.length, 'default and explicit four-step lengths match')
+        t.is(pcm.length, original.length, 'default and explicit one-step lengths match')
         t.ok(
           pcm.every((v, i) => Math.abs(v - original[i]) <= 4),
-          'default native PCM matches explicit four-step synthesis'
+          'default native PCM matches explicit one-step synthesis'
         )
       } finally {
         await explicit.destroy()

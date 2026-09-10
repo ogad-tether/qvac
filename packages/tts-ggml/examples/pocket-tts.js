@@ -18,7 +18,7 @@ async function main() {
     config: { language: 'en', useGPU: false },
     threads: 1,
     seed: 1234,
-    steps: 4,
+    steps: 1, // Set to 4 for the slower quality option.
     opts: { stats: true }
   })
   try {

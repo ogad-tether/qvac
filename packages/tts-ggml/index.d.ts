@@ -371,7 +371,7 @@ interface TTSGgmlOptions extends ParlerDescriptionFields, Audio8VoiceFields, TTS
     voice?: string;
     /** Alias for `voice` for compatibility with `@qvac/tts-onnx`. */
     voiceName?: string;
-    /** Supertonic CFM steps (0 uses GGUF default); Pocket sampling steps (1–64, default 4). */
+    /** Supertonic CFM steps (0 uses GGUF default); Pocket sampling steps (1–64, default 1). */
     steps?: number;
     /** Alias for `steps` for compatibility with `@qvac/tts-onnx`. */
     numInferenceSteps?: number;

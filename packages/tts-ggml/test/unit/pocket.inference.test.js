@@ -8,9 +8,10 @@ global.process = process
 const files = { modelDir: '/models/pocket' }
 const make = (options = {}) => new TTSGgml({ engine: 'pocket', files, ...options })
 
-test('Pocket defaults to four steps and preserves explicit sampling controls', (t) => {
-  t.is(make()._buildTtsParams().steps, 4)
+test('Pocket defaults to one step and preserves explicit sampling controls', (t) => {
+  t.is(make()._buildTtsParams().steps, 1)
   t.is(make({ steps: 1 })._buildTtsParams().steps, 1)
+  t.is(make({ steps: 4 })._buildTtsParams().steps, 4)
   t.is(make({ numInferenceSteps: 2 })._buildTtsParams().steps, 2)
   t.is(make({ steps: 8, numInferenceSteps: 8 })._buildTtsParams().steps, 8)
 })
@@ -82,12 +83,12 @@ test('Pocket invalid reload preserves configuration; valid reload forwards sampl
     return new TTSInterface(new MockedBinding(), p, cb)
   }
   await model.load()
-  t.is(params.steps, 4)
+  t.is(params.steps, 1)
   await t.exception(model.reload({ useGPU: true }))
   t.is(model._buildTtsParams().useGPU, false)
   await model.reload({ outputSampleRate: 44100 })
   t.is(params.outputSampleRate, 44100)
-  t.is(params.steps, 4)
+  t.is(params.steps, 1)
   await model.destroy()
 })
 
