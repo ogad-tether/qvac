@@ -186,17 +186,22 @@ and is included in the merged native source.
 
 ## Dependency pins and measured performance
 
-This change pins the merged registry baseline to
-`c52e395b0dea5a20d1fde3a0fce6bf824e605c75`, selecting speech-cpp
-2026-09-14 and ggml-speech 2026-09-09#1. The version database is now on
-registry `main`, so no temporary Git `reference` is needed. The merged
-registry contains the same speech-cpp port tree used for the validation above.
-The speech source is pinned to merge commit
-`a44840ea23403ee9f64afa622825c1fa4695f993`, including the EOS-tail review fix.
-The source and registry changes are tracked in PRs
-[qvac-fabric-speech.cpp#240](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/240)
-and [qvac-registry-vcpkg#364](https://github.com/tetherto/qvac-registry-vcpkg/pull/364).
-Both dependencies are merged.
+The consumer pins registry baseline and reference to
+`bdfafc83cb0ba12b54c3eecd09b6936911f4d9e0`, selecting speech-cpp
+2026-09-14#1 and ggml-speech 2026-09-14. This includes the follow-up fix for
+Linux/Android dynamic CPU backends: Pocket's metadata-only memory planner now
+resolves `ggml_graph_plan` through the selected backend registry. The original
+direct import left an unresolved symbol in the addon. Synthesis arithmetic is
+unchanged. The source fixes are
+[ggml #92](https://github.com/tetherto/qvac-ext-ggml/pull/92) and
+[speech #251](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/251).
+The explicit registry reference is needed until the follow-up version database
+merges; the original native PR #240 and registry PR #364 are already merged.
+
+Static/dynamic CPU planner regression tests and Pocket graph-memory, fit and
+engine/audio tests pass locally with the follow-up sources. The broader addon
+validation above used the preceding September 14 pin; Linux/Android prebuild
+validation for this fix is tracked on Fabric PR #4396.
 
 The npm addon release is a separate dependency: published `@qvac/tts-ggml@0.9.0`
 does not contain Pocket. The workspace builds and audio tests above use the
