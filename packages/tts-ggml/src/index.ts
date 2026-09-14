@@ -3,10 +3,14 @@ import bareOs = require("bare-os");
 import path = require("bare-path");
 import fs = require("bare-fs");
 import loggingModule = require("@qvac/logging");
-import type { LoggerInterface, QvacLogger as QvacLoggerType } from "@qvac/logging";
+import type QvacLoggerType from "@qvac/logging";
+import type { LoggerInterface } from "@qvac/logging";
 // Published logging releases expose a CJS constructor; the workspace exposes
 // an ESM default. Bare require(ESM) returns a namespace without __esModule.
-const QvacLogger = typeof loggingModule === "function" ? loggingModule : loggingModule.default;
+const loggingExport = loggingModule as
+  | typeof QvacLoggerType
+  | { default: typeof QvacLoggerType };
+const QvacLogger = typeof loggingExport === "function" ? loggingExport : loggingExport.default;
 /* eslint-enable @typescript-eslint/no-require-imports */
 import {
   createJobHandler,
@@ -25,6 +29,7 @@ import {
 } from "./tts";
 import * as errorModule from "./lib/error";
 import { buildPocketParams } from "./lib/pocketConfig";
+import { resolveBackendsDir as resolveBackendsDirImpl } from "./lib/backends";
 import { splitTtsText } from "./lib/textChunker";
 import {
   accumulateTextStream,
@@ -1832,7 +1837,7 @@ class TTSGgml {
     this._backendsDir = firstNonEmpty(
       options.backendsDir,
       this._config.backendsDir,
-      path.join(__dirname, "prebuilds"),
+      resolveBackendsDirImpl(),
     );
     this._openclCacheDir = firstNonEmpty(
       options.openclCacheDir,
@@ -3675,6 +3680,8 @@ namespace TTSGgml {
   export type TTSRunInput = NamespaceRunInput;
   export type InferenceState = NamespaceInferenceState;
   export type CosyvoiceInstruct = NamespaceCosyvoiceInstruct;
+
+  export const resolveBackendsDir = resolveBackendsDirImpl;
 }
 
 export = TTSGgml;

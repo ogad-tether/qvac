@@ -104,6 +104,18 @@ module.exports = test(
       const empty = await model.run({ input: '   ' })
       await t.exception(empty.await())
       await run(44100)
+      // Verify the packaged native dependency includes the merged EOS-tail
+      // fix: the old token-only budget threw after emitting partial audio.
+      await model.reload({ outputSampleRate: 24000, framesAfterEos: 100, eosThreshold: -1e30 })
+      const tail = await model.run({ input: 'Hi.' })
+      let tailSamples = 0
+      let tailCompleted = 0
+      for await (const chunk of tail.iterate()) {
+        tailSamples += chunk.outputArray.length
+        if (chunk.isLast) tailCompleted++
+      }
+      t.is(tailCompleted, 1, 'explicit EOS tail completes normally')
+      t.is(tailSamples, 100 * 1920, 'all 100 EOS-tail frames are delivered')
     } finally {
       await model.destroy()
     }

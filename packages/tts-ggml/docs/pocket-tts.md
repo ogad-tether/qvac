@@ -163,39 +163,45 @@ configuration, cache and worker are bounded by a process supervisor. The
 inference and addon real-model tests skip when their model variable is absent;
 pass it explicitly when validating synthesis.
 
-The current macOS port passes eight native Pocket tests, 283 addon unit tests,
-the real addon and inference tests, and four public SDK transport tests. The
-current pinned iOS Simulator Bare Kit worklet also passes 58 assertions and
-generates a valid WAV (Bare 1.29.4, iOS 18.6).
+The merged native source passes nine Pocket CTests (124 enabled CPU CTests
+in total). The September 14 macOS package passes 295 addon unit tests / 928
+assertions, 64 Node package/build tests, and the real addon integration test
+with 124 assertions, including the 100-frame EOS-tail regression. Focused
+inference tests and four public SDK transport tests generate real audio.
+The same pinned package builds for iOS Simulator; the Bare Kit worklet passes
+65 assertions and produces valid 24 kHz PCM (Bare 1.29.4, iOS 18.6), including
+the EOS-tail regression. Assertion totals can vary with streamed chunk sizes.
 Adversarial review covered native math/asset validation in the speech repository
 and addon request/lifecycle races, cancellation, reload and test cleanup here.
-Audio checks cover sample validity, clipping and automated transcription;
-these are not subjective naturalness ratings.
+Audio checks cover sample validity and clipping; these are not subjective
+naturalness ratings.
 
-The full current inference TypeScript build has existing errors in safe-fetch,
-AudioGen and sdcpp. Focused Pocket compilation uses `noEmitOnError` and passes;
-the current SDK compiles. Physical iOS / Android audio validation and mobile
-SDK transport validation remain outside the measured coverage. Native CI
-builds succeed for Android and iOS. The Linux/Windows Supertonic fit-test
-regression introduced by [speech PR #229](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/229)
-is addressed independently in [speech PR #242](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/242).
-That fix is separate from the Pocket TTS source change and does not change runtime behavior.
-
+The full current inference TypeScript build still reports two existing type
+errors in unchanged `safe-fetch.ts`. Focused Pocket compilation uses
+`noEmitOnError` and passes; the whole SDK compiles. Physical iOS / Android audio
+and mobile SDK transport validation remain outside the measured coverage.
+The unrelated Supertonic fit-test fix was merged separately in
+[speech PR #242](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/242)
+and is included in the merged native source.
 
 ## Dependency pins and measured performance
 
 This change pins the registry baseline and Git reference to
-`7a70a0c301c155beb85e985c542f8b0ccd090e10`, selecting speech-cpp
-2026-09-10#1 and ggml-speech 2026-09-09#1. The explicit `reference` makes
+`54aa0dbd537c732dc97da916b9f527c184afa51e`, selecting speech-cpp
+2026-09-14 and ggml-speech 2026-09-09#1. The explicit `reference` makes
 the version database available before its registry PR merges; baseline alone
 only selects minimum versions and otherwise vcpkg reads the default branch's
 version database. See the [vcpkg registry reference documentation](https://learn.microsoft.com/en-us/vcpkg/reference/vcpkg-configuration-json#registry-reference).
+The speech source is pinned to merge commit
+`a44840ea23403ee9f64afa622825c1fa4695f993`, including the EOS-tail review fix.
 The source and registry changes are tracked in PRs
 [qvac-fabric-speech.cpp#240](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/240)
 and [qvac-registry-vcpkg#364](https://github.com/tetherto/qvac-registry-vcpkg/pull/364).
 
-The final native benchmark links the exact libraries installed by the pinned
-registry and normal addon build. It uses Apple M2 CPU, one thread per worker,
+The recorded September 10 native benchmark linked the exact libraries installed
+by the previous speech-cpp 2026-09-10#1 registry pin (`470e678f` source) and
+normal addon build. It has not been rerun against the September 14 package;
+current validation above covers builds and functional audio checks. It uses Apple M2 CPU, one thread per worker,
 two workers, **one sampling step**, one warmup and three measured runs per
 prompt, matching Fabric's default. Medians:
 

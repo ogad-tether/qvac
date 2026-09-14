@@ -39,12 +39,14 @@ const fs = require("bare-fs");
 const loggingModule = require("@qvac/logging");
 // Published logging releases expose a CJS constructor; the workspace exposes
 // an ESM default. Bare require(ESM) returns a namespace without __esModule.
-const QvacLogger = typeof loggingModule === "function" ? loggingModule : loggingModule.default;
+const loggingExport = loggingModule;
+const QvacLogger = typeof loggingExport === "function" ? loggingExport : loggingExport.default;
 /* eslint-enable @typescript-eslint/no-require-imports */
 const infer_base_1 = require("@qvac/infer-base");
 const tts_1 = require("./tts");
 const errorModule = __importStar(require("./lib/error"));
 const pocketConfig_1 = require("./lib/pocketConfig");
+const backends_1 = require("./lib/backends");
 const textChunker_1 = require("./lib/textChunker");
 const textStreamAccumulator_1 = require("./lib/textStreamAccumulator");
 const { platform } = bareOs;
@@ -970,7 +972,7 @@ class TTSGgml {
         this._assignSynthesisOptions(options);
         this._enhancerGgufPath = resolveEnhancerGgufPath(normalizedFiles, options.enhancer);
         this._denoiserGgufPath = resolveDenoiserGgufPath(normalizedFiles, options.denoiser);
-        this._backendsDir = firstNonEmpty(options.backendsDir, this._config.backendsDir, path.join(__dirname, "prebuilds"));
+        this._backendsDir = firstNonEmpty(options.backendsDir, this._config.backendsDir, (0, backends_1.resolveBackendsDir)());
         this._openclCacheDir = firstNonEmpty(options.openclCacheDir, this._config.openclCacheDir);
         this._vulkanCacheDir = firstNonEmpty(options.vulkanCacheDir, this._config.vulkanCacheDir);
         assertGpuIntentConsistent(this._config.useGPU, this._nGpuLayers);
@@ -2503,6 +2505,7 @@ class TTSGgml {
 (function (TTSGgml) {
     TTSGgml.QvacErrorAddonTTSGgml = errorModule.QvacErrorAddonTTSGgml;
     TTSGgml.ERR_CODES = errorModule.ERR_CODES;
+    TTSGgml.resolveBackendsDir = backends_1.resolveBackendsDir;
 })(TTSGgml || (TTSGgml = {}));
 module.exports.QvacErrorAddonTTSGgml =
     errorModule.QvacErrorAddonTTSGgml;
