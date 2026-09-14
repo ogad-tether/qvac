@@ -66,7 +66,7 @@ test('TTS holds admission through native cancellation and does not cancel its su
     t.is((await first.next()).value, 1)
     const nextSecond = second.next()
     t.is(getRequestRegistry().cancel({ requestId: 'tts-drain-first' }), 1)
-    const cancelled = t.exception(first.next(), /cancel/i)
+    const cancelled = t.exception(first.next(), /cancel/i, 'cancelled request rejects')
     await new Promise((resolve) => setTimeout(resolve, 20))
     t.is(successorStarted, false, 'successor waits for cancellation barrier')
     releaseCancel.resolve()

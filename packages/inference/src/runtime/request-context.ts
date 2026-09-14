@@ -130,7 +130,12 @@ function installDefaultPolicies(r: RequestRegistry): void {
     sharedSlotGroup: LLAMACPP_COMPLETION_SLOT_GROUP
   })
   // TTS owns one native job per model, including duplex input and cancellation.
-  r.policy({ kind: 'tts', maxConcurrentPerModel: 1, onOverflow: 'queue', maxQueueDepthPerModel: 64 })
+  r.policy({
+    kind: 'tts',
+    maxConcurrentPerModel: 1,
+    onOverflow: 'queue',
+    maxQueueDepthPerModel: 64
+  })
   // ACE-Step owns one active job per model. Starting another run replaces the
   // addon's active response, and model-scoped cancel targets that single active
   // job. Keep the registry authoritative by admitting one AudioGen request per

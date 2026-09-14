@@ -1,14 +1,7 @@
 {
   "extends": "../tsconfig.json",
-  "include": [
-    "./*.test.ts",
-    "../../src/types/**/*"
-  ],
-  "exclude": [
-    "../dist",
-    "../pocket-dist",
-    "../../node_modules"
-  ],
+  "include": ["./*.test.ts", "../../src/types/**/*"],
+  "exclude": ["../dist", "../pocket-dist", "../../node_modules"],
   "compilerOptions": {
     "outDir": "../pocket-dist",
     "rootDir": "../..",
@@ -17,9 +10,7 @@
     "allowImportingTsExtensions": false,
     "declaration": false,
     "declarationMap": false,
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
   "tsc-alias": {
     "resolveFullPaths": true

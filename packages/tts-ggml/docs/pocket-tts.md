@@ -186,17 +186,26 @@ and is included in the merged native source.
 
 ## Dependency pins and measured performance
 
-This change pins the registry baseline and Git reference to
-`54aa0dbd537c732dc97da916b9f527c184afa51e`, selecting speech-cpp
-2026-09-14 and ggml-speech 2026-09-09#1. The explicit `reference` makes
-the version database available before its registry PR merges; baseline alone
-only selects minimum versions and otherwise vcpkg reads the default branch's
-version database. See the [vcpkg registry reference documentation](https://learn.microsoft.com/en-us/vcpkg/reference/vcpkg-configuration-json#registry-reference).
+This change pins the merged registry baseline to
+`c52e395b0dea5a20d1fde3a0fce6bf824e605c75`, selecting speech-cpp
+2026-09-14 and ggml-speech 2026-09-09#1. The version database is now on
+registry `main`, so no temporary Git `reference` is needed. The merged
+registry contains the same speech-cpp port tree used for the validation above.
 The speech source is pinned to merge commit
 `a44840ea23403ee9f64afa622825c1fa4695f993`, including the EOS-tail review fix.
 The source and registry changes are tracked in PRs
 [qvac-fabric-speech.cpp#240](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/240)
 and [qvac-registry-vcpkg#364](https://github.com/tetherto/qvac-registry-vcpkg/pull/364).
+Both dependencies are merged.
+
+The npm addon release is a separate dependency: published `@qvac/tts-ggml@0.9.0`
+does not contain Pocket. The workspace builds and audio tests above use the
+checkout's wrapper and locally built native prebuilds. Package-local Bun installs
+in SDK Pod CI resolve the published addon and currently fail on `ENGINE_POCKET`
+and `pocketFlowModel`. Before shipping the SDK integration, release the Pocket
+addon with matching platform prebuilds and raise the inference/SDK dependency
+floors to that version. The current `^0.9.0` ranges do not establish Pocket support.
+
 
 The recorded September 10 native benchmark linked the exact libraries installed
 by the previous speech-cpp 2026-09-10#1 registry pin (`470e678f` source) and

@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Native Pocket TTS with converted FlowLM/Mimi bundles, prepared voices or
+  reference-WAV conditioning, and batch, streaming and duplex synthesis through
+  the Fabric inference plugin and SDK. Supports explicit flow-sampling steps;
+  four steps are recommended for the observed one-step speech artifact.
+
+### Changed
+
+- Consume speech-cpp 2026-09-14 from the merged registry baseline, including the
+  Pocket EOS-tail fix.
+
 ## [0.9.0] - 2026-09-11
 
 ### Added
