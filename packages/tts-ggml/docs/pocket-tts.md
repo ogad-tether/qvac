@@ -196,11 +196,35 @@ selected backend registry, fixing the unresolved direct import in Linux/Android
 prebuilds. The source fixes are merged in
 [ggml #92](https://github.com/tetherto/qvac-ext-ggml/pull/92) and
 [speech #251](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/251).
-The merged ggml commit also includes intervening CPU, Metal and Vulkan changes;
-the passing September 14 run does not validate those additional changes.
+The merged ggml commit also includes intervening CPU, Metal and Vulkan changes,
+covered by the prebuild and integration validation below.
 The explicit registry reference is needed until
 [registry #367](https://github.com/tetherto/qvac-registry-vcpkg/pull/367) merges.
-Validation of these exact merged pins is tracked on Fabric PR #4396.
+Validation of these exact merged pins:
+
+- Static and dynamically loaded ggml CPU planner regressions pass.
+- All 10 native Pocket tests pass with regenerated upstream FlowLM/Mimi and
+  frontend fixtures, including F16 storage parity, memory fit and real audio.
+- Normal pinned macOS and iOS Simulator addon builds pass. Addon type checks,
+  295 unit tests / 928 assertions and 64 Node package/build tests pass.
+- The rebuilt macOS addon passes 124 audio assertions. The iOS 18.6 Simulator
+  Bare Kit 0.14.5 worklet passes 64 assertions. Both produce valid 24 kHz mono
+  PCM16 with no clipping; this is functional coverage, not a new quality benchmark.
+- The inference suite passes 14 tests / 85 assertions; the public Node SDK
+  passes all four tests through its production worker/socket transport using
+  the workspace addon, including duplex, cancellation and recovery.
+- The merged ggml passes all 116 selected Supertonic operation cases on Metal
+  against the CPU reference, covering the additional backend changes.
+- Six paired old-versus-merged macOS audio cases (short, medium and 46–48-second
+  passages, each at one and four steps) produce bit-identical PCM with no clipping.
+  This checks the pin update against the previous tested build; it does not
+  establish that either sampling setting is free of perceptual artifacts.
+- All nine platform prebuild jobs and all seven desktop integration lanes pass
+  in [the merged-source CI run](https://github.com/tetherto/qvac/actions/runs/34975293366)
+  using Fabric `49d864d2e1a2070a4cb9872cd0f62319fdb9e839`. This includes Linux
+  x64/ARM64, Windows x64, macOS x64/ARM64, Android ARM64 and all three iOS
+  prebuild variants; desktop integration covers CPU, Metal, Vulkan and CUDA.
+  The Linux/Android unresolved-symbol gates and the run's merge guard pass.
 
 The npm addon release is a separate dependency: published `@qvac/tts-ggml@0.9.0`
 does not contain Pocket. The workspace builds and audio tests above use the
