@@ -186,8 +186,8 @@ and is included in the merged native source.
 
 ## Dependency pins and measured performance
 
-The consumer pins registry baseline and reference to
-`5e8ea7e7704c5ed9ec116cb63168910b6ef5037b`, selecting speech-cpp and
+The consumer pins the merged registry baseline to
+`f482b77ac9883192745ad16e49ed6fe0adfb14b2`, selecting speech-cpp and
 ggml-speech 2026-09-15. These versions use the merged source commits:
 `speech-cpp` at `a976c4d63195601fcff8bfc0c2cdf3ef36fba539` and
 `ggml-speech` at `59a0ca2c2bcd7de36c27d930f79e0c94cc0c2ff3`.
@@ -198,8 +198,10 @@ prebuilds. The source fixes are merged in
 [speech #251](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/251).
 The merged ggml commit also includes intervening CPU, Metal and Vulkan changes,
 covered by the prebuild and integration validation below.
-The explicit registry reference is needed until
-[registry #367](https://github.com/tetherto/qvac-registry-vcpkg/pull/367) merges.
+[Registry #367](https://github.com/tetherto/qvac-registry-vcpkg/pull/367) is merged,
+so the consumer no longer needs an explicit registry reference. Its speech-cpp
+and ggml-speech port trees and dependency versions are unchanged from the
+registry revision used by the full CI run below.
 Validation of these exact merged pins:
 
 - Static and dynamically loaded ggml CPU planner regressions pass.
@@ -225,13 +227,16 @@ Validation of these exact merged pins:
   x64/ARM64, Windows x64, macOS x64/ARM64, Android ARM64 and all three iOS
   prebuild variants; desktop integration covers CPU, Metal, Vulkan and CUDA.
   The Linux/Android unresolved-symbol gates and the run's merge guard pass.
+- After switching to the merged registry baseline and removing the reference,
+  macOS and iOS Simulator dependency resolution and addon builds pass again;
+  the macOS audio suite passes all 124 assertions.
 
 The npm addon release is a separate dependency: published `@qvac/tts-ggml@0.9.0`
 does not contain Pocket. The workspace builds and audio tests above use the
 checkout's wrapper and locally built native prebuilds. Package-local Bun installs
-in SDK Pod CI resolve the published addon and currently fail on `ENGINE_POCKET`
-and `pocketFlowModel`. Before shipping the SDK integration, release the Pocket
-addon with matching platform prebuilds and raise the inference/SDK dependency
+in SDK Pod CI previously resolved the published addon and failed on
+`ENGINE_POCKET` and `pocketFlowModel`. Before shipping the SDK integration, release
+the Pocket addon with matching platform prebuilds and raise the inference/SDK dependency
 floors to that version. The current `^0.9.0` ranges do not establish Pocket support.
 
 
