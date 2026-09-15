@@ -187,21 +187,20 @@ and is included in the merged native source.
 ## Dependency pins and measured performance
 
 The consumer pins registry baseline and reference to
-`bdfafc83cb0ba12b54c3eecd09b6936911f4d9e0`, selecting speech-cpp
-2026-09-14#1 and ggml-speech 2026-09-14. This includes the follow-up fix for
-Linux/Android dynamic CPU backends: Pocket's metadata-only memory planner now
-resolves `ggml_graph_plan` through the selected backend registry. The original
-direct import left an unresolved symbol in the addon. Synthesis arithmetic is
-unchanged. The source fixes are
+`5e8ea7e7704c5ed9ec116cb63168910b6ef5037b`, selecting speech-cpp and
+ggml-speech 2026-09-15. These versions use the merged source commits:
+`speech-cpp` at `a976c4d63195601fcff8bfc0c2cdf3ef36fba539` and
+`ggml-speech` at `59a0ca2c2bcd7de36c27d930f79e0c94cc0c2ff3`.
+Pocket's metadata-only memory planner resolves `ggml_graph_plan` through the
+selected backend registry, fixing the unresolved direct import in Linux/Android
+prebuilds. The source fixes are merged in
 [ggml #92](https://github.com/tetherto/qvac-ext-ggml/pull/92) and
 [speech #251](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/251).
-The explicit registry reference is needed until the follow-up version database
-merges; the original native PR #240 and registry PR #364 are already merged.
-
-Static/dynamic CPU planner regression tests and Pocket graph-memory, fit and
-engine/audio tests pass locally with the follow-up sources. The broader addon
-validation above used the preceding September 14 pin; Linux/Android prebuild
-validation for this fix is tracked on Fabric PR #4396.
+The merged ggml commit also includes intervening CPU, Metal and Vulkan changes;
+the passing September 14 run does not validate those additional changes.
+The explicit registry reference is needed until
+[registry #367](https://github.com/tetherto/qvac-registry-vcpkg/pull/367) merges.
+Validation of these exact merged pins is tracked on Fabric PR #4396.
 
 The npm addon release is a separate dependency: published `@qvac/tts-ggml@0.9.0`
 does not contain Pocket. The workspace builds and audio tests above use the
@@ -214,7 +213,7 @@ floors to that version. The current `^0.9.0` ranges do not establish Pocket supp
 
 The recorded September 10 native benchmark linked the exact libraries installed
 by the previous speech-cpp 2026-09-10#1 registry pin (`470e678f` source) and
-normal addon build. It has not been rerun against the September 14 package;
+normal addon build. It has not been rerun against the September 15 package;
 current validation above covers builds and functional audio checks. It uses Apple M2 CPU, one thread per worker,
 two workers, **one sampling step**, one warmup and three measured runs per
 prompt, matching Fabric's default. Medians:

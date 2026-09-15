@@ -16,8 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Consume speech-cpp 2026-09-14 from the merged registry baseline, including the
-  Pocket EOS-tail fix.
+- Consume speech-cpp and ggml-speech 2026-09-15, pinned to the merged native
+  source commits, including the Pocket EOS-tail and CPU planner fixes.
 - Resolve Pocket CPU memory planning through the dynamically loaded backend,
   fixing unresolved `ggml_graph_plan` imports in Linux and Android prebuilds.
 
