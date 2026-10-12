@@ -1062,29 +1062,27 @@ native device names. Run these model
 tests on provisioned hardware with sufficient memory. Mocked JS forwarding
 tests and the C++ option-mapping tests do not establish GPU execution.
 
-### Proposed OpenMOSS native dependency validation
+### OpenMOSS native dependency validation
 
-This development branch consumes the proposed `speech-cpp` 2026-10-12 port
-from [registry PR #423](https://github.com/tetherto/qvac-registry-vcpkg/pull/423).
+This development branch consumes `speech-cpp` 2026-10-12 from
+[registry PR #423](https://github.com/tetherto/qvac-registry-vcpkg/pull/423).
 Both the git registry `baseline` and temporary `reference` point at
-`b535c33b71907c19c634da7cb10fc917bad95b33`, so vcpkg can resolve the unmerged
-version database. The native source is `1ec215b51db988777ff3c52bc1f44715ea2b410e`;
+`8169053b30422d8e21af169e934d4ba589de2efd`, so vcpkg can resolve the unmerged
+version database. The native source is `84b02694001cfea863167776dbc185474a816656`;
 `ggml-speech` stays at 2026-10-07#1. No addon release version is changed.
 
-CUDA [#321](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/321) merged
-on October 12 into the Vulkan
-[#308](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/308) branch as
-`c29618b1865e06bf0993804493e101682f2103a5`, not native master. Vulkan #308
-must land before registry #423. This registry pin includes the combined native
-head and its latest precision documentation and timed-quality runner changes.
-Reconcile the source REF, archive hash and version tree again if native review
-changes the final revision. Update the baseline to the actual final registry
-main commit and remove the temporary `reference` once the version is on main.
-The implementation dependency is [qvac #4976](https://github.com/tetherto/qvac/pull/4976).
-The earlier native `f4d4c257` passed ten smaller-model CUDA/Vulkan cases; those
-results do not establish GPU validation of this refreshed native pin or the
-packaged ASR addon. Keep this consumer draft until its dependency and packaged
-GPU validation gates pass.
+Vulkan [#308](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/308),
+including CUDA [#321](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/321),
+merged into native master on October 12. This registry pin uses that final
+merge commit. Land registry #423, then update the baseline to the actual
+registry main commit and remove the temporary `reference` once the version is
+on main. The implementation dependency is
+[qvac #4976](https://github.com/tetherto/qvac/pull/4976).
+Earlier native GPU results do not establish full CUDA/Vulkan validation of
+this merged native source or the packaged ASR addon. Keep this consumer draft
+until its dependency and packaged GPU validation gates pass. Fresh packaged
+ASR linking also remains unvalidated: the prior cache-only macOS install was
+blocked by a missing `ggml-speech[metal]` binary for the detected compiler ABI.
 
 On a provisioned Linux NVIDIA host with CUDA 13, Vulkan drivers, sufficient
 memory, and package development dependencies installed, run from this package:
