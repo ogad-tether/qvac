@@ -25,6 +25,7 @@ function assessFit(request) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports -- native binding is resolved lazily from package prebuilds.
     const binding = require('../binding.js');
     if (request.engine === 'moss-transcribe') {
+        (0, driver_1.mossTranscribeBackend)(request.backend);
         (0, driver_1.mossTranscribeJobFields)({
             prompt: request.prompt,
             hotwords: request.hotwords,
