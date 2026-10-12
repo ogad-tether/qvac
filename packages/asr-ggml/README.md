@@ -1071,12 +1071,17 @@ Both the git registry `baseline` and temporary `reference` point at
 version database. The native source is `f4d4c257dd1d6fafdf1bdec4f9bf4caa6ec5cf33`;
 `ggml-speech` stays at 2026-10-07#1. No addon release version is changed.
 
-Before merging this pin, native Vulkan
-[#308](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/308) and CUDA
-[#321](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/321), then registry
-#423, must land. Refresh the native source/archive in the registry if its
-reviewed revision changes. Update this baseline to the final registry main
-commit and remove the temporary `reference` once the version is on main.
+CUDA [#321](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/321) merged
+on October 12 into the Vulkan
+[#308](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/308) branch as
+`c29618b1865e06bf0993804493e101682f2103a5`, not native master. Vulkan #308
+remains under review. Before merging this pin, land the reviewed native change,
+reconcile registry #423's source REF, archive hash and version tree with that
+final native revision, then merge the registry. This draft intentionally keeps
+the immutable registry reference above until reconciliation. Update the baseline
+to the actual final registry main commit and remove the temporary `reference`
+once the version is on main. The implementation dependency is
+[qvac #4976](https://github.com/tetherto/qvac/pull/4976).
 
 On a provisioned Linux NVIDIA host with CUDA 13, Vulkan drivers, sufficient
 memory, and package development dependencies installed, run from this package:
