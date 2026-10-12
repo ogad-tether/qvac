@@ -1064,10 +1064,10 @@ tests and the C++ option-mapping tests do not establish GPU execution.
 
 ### OpenMOSS native dependency validation
 
-This development branch consumes `speech-cpp` 2026-10-12 from
+This development branch consumes `speech-cpp` 2026-10-12#1 from
 [registry PR #423](https://github.com/tetherto/qvac-registry-vcpkg/pull/423).
 Both the git registry `baseline` and temporary `reference` point at
-`8169053b30422d8e21af169e934d4ba589de2efd`, so vcpkg can resolve the unmerged
+`a7c7dcbd0476049839f002315ba6d1a2eb27ae50`, so vcpkg can resolve the unmerged
 version database. The native source is `84b02694001cfea863167776dbc185474a816656`;
 `ggml-speech` stays at 2026-10-07#1. No addon release version is changed.
 
