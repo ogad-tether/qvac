@@ -1073,12 +1073,43 @@ Desktop CUDA/Vulkan support depends on the native speech changes in
 (`75b5d44de287d8debedb9c89276b1d9443fb0e07`) and its stacked
 [CUDA #321](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/321)
 (`f4d4c257dd1d6fafdf1bdec4f9bf4caa6ec5cf33`). These native revisions have
-GPU validation; they do not establish support in a published addon. Before
-validating an addon build, the shared `speech-cpp` registry pin must consume
-those changes and its compatible `ggml-speech` dependency, then the addon
-must be rebuilt. The current package manifest/pin is not advanced here;
-there is no new released version implied by this guide. Native desktop
-results also do not establish Android support or speech-quality signoff.
+GPU validation; they do not establish support in a published addon. This
+checkout consumes the draft [registry #423](https://github.com/tetherto/qvac-registry-vcpkg/pull/423)
+at `5990c30c0501c46cfb9278e067282edcba7a5c88`: `speech-cpp` 2026-10-12
+pins the CUDA revision above, and `ggml-speech` 2026-10-07#1 pins
+`06f1b66806626a635904f31db6914ad2d0e71197`. The ggml CUDA/Vulkan sources
+match the native GPU CI revision. Rebuild the addon before running its GPU
+tests; neither addon GPU execution nor a new release is implied by this pin.
+Native desktop results also do not establish Android support or speech-quality
+signoff.
+
+Both `baseline` and `reference` in `vcpkg-configuration.json` deliberately
+point to the immutable draft registry commit. Before registry #423 merges,
+setting only `baseline` still reads the version database from registry main,
+which cannot resolve the proposed speech version. Merge native #308, then
+#321, then registry #423 before merging this dependency layer. Reconcile the
+pin with the actual reviewed registry commit if it changes or is squash-merged;
+remove the temporary `reference` only once main contains the required version.
+Keep the addon PR draft until its dependency and GPU validation gates pass.
+
+From `packages/tts-ggml`, resolve the checked-in manifest without building or
+downloading models (with `VCPKG_ROOT` set):
+
+```sh
+vcpkg install --dry-run --triplet x64-linux --x-feature=cuda --x-feature=vulkan
+```
+
+On a macOS host without a Linux cross-compiler, prefix that dry-run command
+with `VCPKG_FEATURE_FLAGS=-compilertracking` to check registry resolution only.
+For a bounded native build on a suitably provisioned Linux GPU host:
+
+```sh
+CMAKE_BUILD_PARALLEL_LEVEL=2 VCPKG_MAX_CONCURRENCY=2 npm run build:cuda
+```
+
+The normal PR workflow requires approval of the `fork-ci` environment for
+external forks. Obtain that approval through the existing gate; a manual
+workflow dispatch is not a substitute for fork approval.
 
 On a desktop with those prerequisites, stage the TTS and TTSD backbones,
 codec decoder/encoder and the bundled `test/reference-audio/jfk.wav`, plus
@@ -1626,7 +1657,8 @@ npx bare-make install       # copies the .bare into prebuilds/<triple>/
 
 The vcpkg port is hosted in
 [`tetherto/qvac-registry-vcpkg`][registry] and pulls
-[`qvac-tts.cpp`][qvac-tts-cpp] at a pinned REF.  See
+[`qvac-fabric-speech.cpp`](https://github.com/tetherto/qvac-fabric-speech.cpp)
+(`engines/tts`) at a pinned REF.  See
 [`vcpkg-configuration.json`](./vcpkg-configuration.json) for the
 baseline commit.
 
