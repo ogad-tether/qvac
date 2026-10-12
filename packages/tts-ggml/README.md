@@ -1068,28 +1068,29 @@ it does not choose a different backend or change the CPU default.
 `response.stats.backendId` identifies the language-model backend (2 = CUDA,
 3 = Vulkan); it is not a measurement of every codec operation.
 
-Desktop CUDA/Vulkan support depends on the native speech changes in
-[Vulkan #308](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/308)
-(`75b5d44de287d8debedb9c89276b1d9443fb0e07`) and its stacked
-[CUDA #321](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/321)
-(`f4d4c257dd1d6fafdf1bdec4f9bf4caa6ec5cf33`). These native revisions have
-GPU validation; they do not establish support in a published addon. This
-checkout consumes the draft [registry #423](https://github.com/tetherto/qvac-registry-vcpkg/pull/423)
-at `5990c30c0501c46cfb9278e067282edcba7a5c88`: `speech-cpp` 2026-10-12
-pins the CUDA revision above, and `ggml-speech` 2026-10-07#1 pins
+Desktop CUDA/Vulkan support depends on the combined native speech changes in
+[Vulkan #308](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/308),
+pinned here at `1ec215b51db988777ff3c52bc1f44715ea2b410e`.
+[CUDA #321](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/321) merged
+into #308 as `c29618b1865e06bf0993804493e101682f2103a5`, not native master.
+This checkout consumes the draft [registry #423](https://github.com/tetherto/qvac-registry-vcpkg/pull/423)
+at `b535c33b71907c19c634da7cb10fc917bad95b33`: `speech-cpp` 2026-10-12
+pins the combined revision above, and `ggml-speech` 2026-10-07#1 pins
 `06f1b66806626a635904f31db6914ad2d0e71197`. The ggml CUDA/Vulkan sources
-match the native GPU CI revision. Rebuild the addon before running its GPU
-tests; neither addon GPU execution nor a new release is implied by this pin.
-Native desktop results also do not establish Android support or speech-quality
-signoff.
+match the native GPU CI revision. The earlier native `f4d4c257` passed ten
+smaller-model CUDA/Vulkan cases; those results do not establish GPU validation
+of this refreshed native pin or the packaged addon. Rebuild the addon before
+running its GPU tests. Native desktop results also do not establish Android
+support or speech-quality signoff.
 
 Both `baseline` and `reference` in `vcpkg-configuration.json` deliberately
 point to the immutable draft registry commit. Before registry #423 merges,
 setting only `baseline` still reads the version database from registry main,
-which cannot resolve the proposed speech version. Merge native #308, then
-#321, then registry #423 before merging this dependency layer. Reconcile the
-pin with the actual reviewed registry commit if it changes or is squash-merged;
-remove the temporary `reference` only once main contains the required version.
+which cannot resolve the proposed speech version. Land native #308, then
+registry #423, and the implementation [qvac #4975](https://github.com/tetherto/qvac/pull/4975)
+before merging this dependency layer. Reconcile the source pin if native review
+changes it; update the baseline to the actual final registry main commit and
+remove the temporary `reference` once main contains the required version.
 Keep the addon PR draft until its dependency and GPU validation gates pass.
 
 From `packages/tts-ggml`, resolve the checked-in manifest without building or
