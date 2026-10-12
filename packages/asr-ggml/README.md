@@ -1067,21 +1067,24 @@ tests and the C++ option-mapping tests do not establish GPU execution.
 This development branch consumes the proposed `speech-cpp` 2026-10-12 port
 from [registry PR #423](https://github.com/tetherto/qvac-registry-vcpkg/pull/423).
 Both the git registry `baseline` and temporary `reference` point at
-`5990c30c0501c46cfb9278e067282edcba7a5c88`, so vcpkg can resolve the unmerged
-version database. The native source is `f4d4c257dd1d6fafdf1bdec4f9bf4caa6ec5cf33`;
+`b535c33b71907c19c634da7cb10fc917bad95b33`, so vcpkg can resolve the unmerged
+version database. The native source is `1ec215b51db988777ff3c52bc1f44715ea2b410e`;
 `ggml-speech` stays at 2026-10-07#1. No addon release version is changed.
 
 CUDA [#321](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/321) merged
 on October 12 into the Vulkan
 [#308](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/308) branch as
 `c29618b1865e06bf0993804493e101682f2103a5`, not native master. Vulkan #308
-remains under review. Before merging this pin, land the reviewed native change,
-reconcile registry #423's source REF, archive hash and version tree with that
-final native revision, then merge the registry. This draft intentionally keeps
-the immutable registry reference above until reconciliation. Update the baseline
-to the actual final registry main commit and remove the temporary `reference`
-once the version is on main. The implementation dependency is
-[qvac #4976](https://github.com/tetherto/qvac/pull/4976).
+must land before registry #423. This registry pin includes the combined native
+head and its latest precision documentation and timed-quality runner changes.
+Reconcile the source REF, archive hash and version tree again if native review
+changes the final revision. Update the baseline to the actual final registry
+main commit and remove the temporary `reference` once the version is on main.
+The implementation dependency is [qvac #4976](https://github.com/tetherto/qvac/pull/4976).
+The earlier native `f4d4c257` passed ten smaller-model CUDA/Vulkan cases; those
+results do not establish GPU validation of this refreshed native pin or the
+packaged ASR addon. Keep this consumer draft until its dependency and packaged
+GPU validation gates pass.
 
 On a provisioned Linux NVIDIA host with CUDA 13, Vulkan drivers, sufficient
 memory, and package development dependencies installed, run from this package:
