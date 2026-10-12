@@ -1062,6 +1062,50 @@ native device names. Run these model
 tests on provisioned hardware with sufficient memory. Mocked JS forwarding
 tests and the C++ option-mapping tests do not establish GPU execution.
 
+### Proposed OpenMOSS native dependency validation
+
+This development branch consumes the proposed `speech-cpp` 2026-10-12 port
+from [registry PR #423](https://github.com/tetherto/qvac-registry-vcpkg/pull/423).
+Both the git registry `baseline` and temporary `reference` point at
+`5990c30c0501c46cfb9278e067282edcba7a5c88`, so vcpkg can resolve the unmerged
+version database. The native source is `f4d4c257dd1d6fafdf1bdec4f9bf4caa6ec5cf33`;
+`ggml-speech` stays at 2026-10-07#1. No addon release version is changed.
+
+Before merging this pin, native Vulkan
+[#308](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/308) and CUDA
+[#321](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/321), then registry
+#423, must land. Refresh the native source/archive in the registry if its
+reviewed revision changes. Update this baseline to the final registry main
+commit and remove the temporary `reference` once the version is on main.
+
+On a provisioned Linux NVIDIA host with CUDA 13, Vulkan drivers, sufficient
+memory, and package development dependencies installed, run from this package:
+
+```sh
+# Bound both dependency compilation and addon compilation.
+export VCPKG_MAX_CONCURRENCY=2 CMAKE_BUILD_PARALLEL_LEVEL=2
+npm run build:ts
+bare-make generate --build build-moss -D ASR_CUDA=ON -D BUILD_TESTING=OFF
+bare-make build --build build-moss --parallel 2
+bare-make install --build build-moss
+
+# Stage the full MOSS GGUF and examples/samples/LastQuestion_long_ES.raw first.
+: "${QVAC_TEST_MOSS_TRANSCRIBE_GGUF:?Set this to the provisioned MOSS GGUF}"
+export QVAC_TEST_MOSS_TRANSCRIBE_GGUF
+node_modules/.bin/brittle -r test/integration/all.js test/integration/moss-transcribe.test.js
+QVAC_TEST_MOSS_TRANSCRIBE_BACKEND=cuda INTEGRATION_TEST_TIMEOUT=1800 \
+  bash test/integration/parakeet-run-tests.sh
+QVAC_TEST_MOSS_TRANSCRIBE_BACKEND=vulkan INTEGRATION_TEST_TIMEOUT=1800 \
+  bash test/integration/parakeet-run-tests.sh
+```
+
+For a Vulkan-only Linux host, generate with `-D ASR_CUDA=OFF` and run only the
+Vulkan command. These checks must execute both default-prompt and hotword
+transcription and assert the selected backend; an explicit backend run fails
+when a fixture is missing. Registry dry-runs, forwarding tests, and compilation
+alone do not validate packaged addon GPU inference. Fork CI still requires the
+repository's normal approval gate.
+
 Typical loop: `npm install && npm run build && npm run test:integration`.
 
 ## Benchmarking
