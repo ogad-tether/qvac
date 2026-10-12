@@ -1072,8 +1072,8 @@ The combined desktop CUDA/Vulkan speech changes in
 [Vulkan #308](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/308),
 including [CUDA #321](https://github.com/tetherto/qvac-fabric-speech.cpp/pull/321),
 merged to native master at `84b02694001cfea863167776dbc185474a816656`.
-This checkout consumes the draft [registry #423](https://github.com/tetherto/qvac-registry-vcpkg/pull/423)
-at `8169053b30422d8e21af169e934d4ba589de2efd`: `speech-cpp` 2026-10-12
+This checkout consumes the proposed [registry #423](https://github.com/tetherto/qvac-registry-vcpkg/pull/423)
+at `a7c7dcbd0476049839f002315ba6d1a2eb27ae50`: `speech-cpp` 2026-10-12#1
 pins that merged revision, and `ggml-speech` 2026-10-07#1 pins
 `06f1b66806626a635904f31db6914ad2d0e71197`. The earlier native `f4d4c257`
 passed ten smaller-model CUDA/Vulkan cases; those results do not establish GPU
@@ -1082,7 +1082,7 @@ before running its GPU tests. Native desktop results also do not establish
 Android support or speech-quality signoff.
 
 Both `baseline` and `reference` in `vcpkg-configuration.json` deliberately
-point to the immutable draft registry commit. Before registry #423 merges,
+point to the immutable proposed registry commit. Before registry #423 merges,
 setting only `baseline` still reads the version database from registry main,
 which cannot resolve the proposed speech version. Land registry #423 and the
 implementation [qvac #4975](https://github.com/tetherto/qvac/pull/4975) before
